@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>七夕 短冊 管理画面</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #1b1b1f;
+    color: #fff;
+    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    padding: 20px 16px 60px;
+  }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .sub { font-size: 13px; opacity: 0.6; margin-bottom: 20px; }
+  .count { font-size: 13px; opacity: 0.8; margin-bottom: 16px; }
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #2a2a30;
+  }
+  .swatch {
+    width: 14px;
+    height: 36px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .info { flex: 1; min-width: 0; }
+  .info .wish {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .info .name {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+  .delBtn {
+    flex-shrink: 0;
+    background: #c44;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .delBtn:active { background: #a33; }
+  .empty {
+    text-align: center;
+    opacity: 0.5;
+    padding: 40px 0;
+    font-size: 14px;
+  }
+  .clearAllBtn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid #c44;
+    background: transparent;
+    color: #f88;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<h1>🎋 短冊 管理画面</h1>
+<div class="sub">配信中の短冊削除用（不適切投稿の削除など）</div>
+<div class="count" id="count"></div>
+<div class="list" id="list"></div>
+<button class="clearAllBtn" id="clearAllBtn">全ての短冊を削除する</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ⚠️ 既存の utaoshi-ringo プロジェクトの設定をここに入れてください
+const firebaseConfig = {
+  apiKey: "AIzaSyDKwFPNTgPJawD47WxuDsJH2-V1E3zWqoU",
+  authDomain: "utaoshi-ringo.firebaseapp.com",
+  databaseURL: "https://utaoshi-ringo-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "utaoshi-ringo",
+  storageBucket: "utaoshi-ringo.firebasestorage.app",
+  messagingSenderId: "572385012765",
+  appId: "1:572385012765:web:2f5542f69930f1a714eaf4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const listEl = document.getElementById("list");
+const countEl = document.getElementById("count");
+
+onValue(ref(db, "tanabata/tanzaku"), (snapshot) => {
+  const data = snapshot.val() || {};
+  const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
+  items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  countEl.textContent = `全 ${items.length} 件`;
+
+  if (items.length === 0) {
+    listEl.innerHTML = '<div class="empty">まだ短冊がありません</div>';
+    return;
+  }
+
+  listEl.innerHTML = "";
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div class="swatch" style="background:${item.color || '#e8534f'}"></div>
+      <div class="info">
+        <div class="wish">${escapeHtml(item.wish || "")}</div>
+        <div class="name">${escapeHtml(item.name || "")}</div>
+      </div>
+      <button class="delBtn">削除</button>
+    `;
+    div.querySelector(".delBtn").addEventListener("click", async () => {
+      if (confirm("この短冊を削除しますか？")) {
+        await remove(ref(db, "tanabata/tanzaku/" + item.id));
+      }
+    });
+    listEl.appendChild(div);
+  });
+});
+
+document.getElementById("clearAllBtn").addEventListener("click", async () => {
+  if (confirm("本当に全ての短冊を削除しますか？この操作は取り消せません。")) {
+    if (confirm("最終確認：本当に全削除しますか？")) {
+      await remove(ref(db, "tanabata/tanzaku"));
+    }
+  }
+});
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>

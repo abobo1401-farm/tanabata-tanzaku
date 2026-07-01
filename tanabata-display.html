@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>七夕 短冊ディスプレイ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: transparent;
+    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+  }
+  #stage {
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+  }
+
+  /* 笹の木 左右配置 */
+  .sasa {
+    position: absolute;
+    width: 620px;
+    height: auto;
+    z-index: 1;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
+  }
+  .sasa-left {
+    left: -60px;
+    bottom: -40px;
+    transform: scaleX(1);
+  }
+  .sasa-right {
+    right: -60px;
+    bottom: -40px;
+    transform: scaleX(-1);
+  }
+
+  /* 短冊 */
+  .tanzaku {
+    position: absolute;
+    width: 64px;
+    padding: 14px 6px;
+    border-radius: 3px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 5;
+    transform-origin: top center;
+    animation: sway 3.4s ease-in-out infinite;
+    font-size: 15px;
+    line-height: 1.6;
+    writing-mode: vertical-rl;
+    text-align: start;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 130px;
+    transition: box-shadow 0.2s;
+  }
+  .tanzaku::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 14px;
+    background: rgba(255,255,255,0.7);
+  }
+  .tanzaku .name-tag {
+    font-size: 11px;
+    opacity: 0.75;
+    margin-top: 6px;
+  }
+  .tanzaku .wish-text {
+    white-space: nowrap;
+  }
+
+  @keyframes sway {
+    0%   { transform: rotate(calc(-1 * var(--sway, 3.5deg))); }
+    50%  { transform: rotate(var(--sway, 3.5deg)); }
+    100% { transform: rotate(calc(-1 * var(--sway, 3.5deg))); }
+  }
+
+  /* 激レア・超激レア演出（常時キラキラ） */
+  .tanzaku.rare-epic, .tanzaku.rare-legendary {
+    box-shadow: 0 0 18px 4px rgba(255,220,120,0.65), 0 6px 14px rgba(0,0,0,0.3);
+  }
+  .tanzaku.rare-legendary {
+    box-shadow: 0 0 22px 6px rgba(255,255,255,0.55), 0 6px 14px rgba(0,0,0,0.3);
+  }
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+    width: 10px;
+    height: 10px;
+    z-index: 6;
+  }
+  .sparkle::before {
+    content: "✨";
+    position: absolute;
+    font-size: 14px;
+    animation: sparkleFloat 1.8s ease-in-out infinite;
+  }
+  @keyframes sparkleFloat {
+    0%, 100% { opacity: 0; transform: translateY(0) scale(0.7); }
+    50% { opacity: 1; transform: translateY(-10px) scale(1.1); }
+  }
+
+  /* 登場演出（金・虹） */
+  .entrance-burst {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .entrance-burst.show { display: flex; }
+  .burst-text {
+    font-size: 64px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255,220,120,0.9), 0 0 40px rgba(255,220,120,0.6);
+    animation: burstPop 1.6s ease forwards;
+    writing-mode: horizontal-tb;
+    text-align: center;
+  }
+  @keyframes burstPop {
+    0%   { transform: scale(0.3); opacity: 0; }
+    20%  { transform: scale(1.15); opacity: 1; }
+    35%  { transform: scale(1); opacity: 1; }
+    80%  { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.3); opacity: 0; }
+  }
+  .confetti-piece {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 16px;
+    z-index: 89;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    to { transform: translateY(2000px) rotate(720deg); opacity: 0.3; }
+  }
+
+  /* 願いごとポップアップ */
+  #wishPopup {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    background: rgba(0,0,0,0.45);
+  }
+  #wishPopup.show { display: flex; }
+  .popup-card {
+    width: 640px;
+    padding: 48px 40px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    text-align: center;
+    animation: popIn 0.35s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .popup-card .pwish {
+    font-size: 38px;
+    font-weight: bold;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    writing-mode: horizontal-tb;
+  }
+  .popup-card .pname {
+    font-size: 22px;
+    opacity: 0.85;
+    writing-mode: horizontal-tb;
+    cursor: pointer;
+    position: relative;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-card .pname .name-real {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .popup-card .pname.revealed .name-real {
+    opacity: 1;
+  }
+  .popup-card .pname .name-placeholder {
+    opacity: 0.6;
+    font-size: 16px;
+    transition: opacity 0.4s ease;
+  }
+  .popup-card .pname.revealed .name-placeholder {
+    opacity: 0;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <img class="sasa sasa-left" src="sasa.png" alt="">
+  <img class="sasa sasa-right" src="sasa.png" alt="">
+  <!-- 短冊はJSで動的生成 -->
+</div>
+
+<div id="wishPopup">
+  <div class="popup-card" id="popupCard">
+    <div class="pwish" id="popupWish"></div>
+    <div class="pname" id="popupName">
+      <span class="name-placeholder">ー 誰の願い？（タップで答え合わせ）</span>
+      <span class="name-real" id="popupNameReal"></span>
+    </div>
+  </div>
+</div>
+
+<div class="entrance-burst" id="entranceBurst">
+  <div class="burst-text" id="burstText"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, query, limitToLast, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ⚠️ 既存の utaoshi-ringo プロジェクトの設定をここに入れてください
+const firebaseConfig = {
+  apiKey: "AIzaSyDKwFPNTgPJawD47WxuDsJH2-V1E3zWqoU",
+  authDomain: "utaoshi-ringo.firebaseapp.com",
+  databaseURL: "https://utaoshi-ringo-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "utaoshi-ringo",
+  storageBucket: "utaoshi-ringo.firebasestorage.app",
+  messagingSenderId: "572385012765",
+  appId: "1:572385012765:web:2f5542f69930f1a714eaf4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const MAX_TANZAKU = 50;
+const stage = document.getElementById("stage");
+
+// 配置エリア（笹の枝にかぶる範囲）。画面を上下2エリアに分けて散らす
+const POSITIONS = generatePositions(MAX_TANZAKU);
+
+function generatePositions(count) {
+  const positions = [];
+  // 左右の笹エリアにまんべんなく配置
+  const zones = [
+    { xMin: 60,  xMax: 420, yMin: 150, yMax: 1500 },   // 左笹エリア
+    { xMin: 620, xMax: 1000, yMin: 150, yMax: 1500 },  // 右笹エリア
+    { xMin: 380, xMax: 700, yMin: 100, yMax: 700 },    // 中央上部（重なり部分）
+  ];
+  for (let i = 0; i < count; i++) {
+    const zone = zones[i % zones.length];
+    const x = zone.xMin + Math.random() * (zone.xMax - zone.xMin);
+    const y = zone.yMin + Math.random() * (zone.yMax - zone.yMin);
+    const rot = (Math.random() * 4 - 2);
+    const sway = (2.5 + Math.random() * 2.5).toFixed(1);
+    const delay = Math.random() * 3;
+    positions.push({ x, y, rot, sway, delay });
+  }
+  return positions;
+}
+
+const tanzakuEls = new Map();
+let isInitialLoad = true;
+
+function renderList(items) {
+  // 既存の短冊のうち、もう無いものは削除
+  const currentIds = new Set(items.map(it => it.id));
+  for (const [id, el] of tanzakuEls.entries()) {
+    if (!currentIds.has(id)) {
+      el.remove();
+      tanzakuEls.delete(id);
+    }
+  }
+
+  items.forEach((item, idx) => {
+    if (tanzakuEls.has(item.id)) return; // 既に表示済み
+    const pos = POSITIONS[idx % POSITIONS.length];
+    const el = document.createElement("div");
+    el.className = "tanzaku";
+    if (item.rarity === "epic") el.classList.add("rare-epic");
+    if (item.rarity === "legendary") el.classList.add("rare-legendary");
+    el.style.left = pos.x + "px";
+    el.style.top = pos.y + "px";
+    el.style.background = item.color || "#e8534f";
+    el.style.color = item.textColor || "#fff";
+    el.style.animationDelay = pos.delay + "s";
+    el.style.setProperty("--sway", pos.sway + "deg");
+
+    const wishSpan = document.createElement("div");
+    wishSpan.className = "wish-text";
+    wishSpan.textContent = item.wish;
+
+    const nameSpan = document.createElement("div");
+    nameSpan.className = "name-tag";
+    nameSpan.textContent = item.name;
+
+    el.appendChild(wishSpan);
+    el.appendChild(nameSpan);
+
+    if (item.rarity === "epic" || item.rarity === "legendary") {
+      addSparkles(el);
+    }
+
+    el.addEventListener("click", () => showPopup(item));
+
+    stage.appendChild(el);
+    tanzakuEls.set(item.id, el);
+
+    // 初回ロード時は登場演出スキップ、新規投稿のみ演出
+    if (isInitialLoad === false && (item.rarity === "epic" || item.rarity === "legendary")) {
+      triggerEntranceEffect(item);
+    }
+  });
+
+  isInitialLoad = false;
+}
+
+function addSparkles(el) {
+  for (let i = 0; i < 3; i++) {
+    const sp = document.createElement("div");
+    sp.className = "sparkle";
+    sp.style.left = (10 + Math.random() * 44) + "px";
+    sp.style.top = (10 + Math.random() * 100) + "px";
+    sp.style.animationDelay = (Math.random() * 1.5) + "s";
+    el.appendChild(sp);
+  }
+}
+
+function triggerEntranceEffect(item) {
+  const burst = document.getElementById("entranceBurst");
+  const burstText = document.getElementById("burstText");
+  const label = item.rarity === "legendary" ? "🌈 超激レア出現！ 🌈" : "🌟 激レア出現！ 🌟";
+  burstText.textContent = label;
+  burstText.style.color = item.rarity === "legendary" ? "#fff" : "#ffe9a8";
+  burst.classList.add("show");
+
+  spawnConfetti(item.rarity === "legendary");
+
+  setTimeout(() => {
+    burst.classList.remove("show");
+  }, 1700);
+}
+
+function spawnConfetti(rainbow) {
+  const colors = rainbow
+    ? ["#ff6b6b", "#ffd76e", "#6bff9d", "#6bc8ff", "#c08bff"]
+    : ["#ffe9a8", "#ffd76e", "#e8b800"];
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement("div");
+    piece.className = "confetti-piece";
+    piece.style.left = Math.random() * 1080 + "px";
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (1.6 + Math.random() * 1.2) + "s";
+    piece.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 3200);
+  }
+}
+
+function showPopup(item) {
+  const popup = document.getElementById("wishPopup");
+  const card = document.getElementById("popupCard");
+  const nameEl = document.getElementById("popupName");
+
+  document.getElementById("popupWish").textContent = item.wish;
+  document.getElementById("popupNameReal").textContent = "ー " + item.name;
+  nameEl.classList.remove("revealed");
+
+  card.style.background = item.color || "#e8534f";
+  card.style.color = item.textColor || "#fff";
+  popup.classList.add("show");
+
+  clearTimeout(window._popupTimer);
+  // 名前が明かされるまでは自動で閉じない
+}
+
+document.getElementById("popupName").addEventListener("click", (e) => {
+  e.stopPropagation();
+  const nameEl = document.getElementById("popupName");
+  if (!nameEl.classList.contains("revealed")) {
+    nameEl.classList.add("revealed");
+    // 名前表示後、5秒で自動クローズ
+    clearTimeout(window._popupTimer);
+    window._popupTimer = setTimeout(() => {
+      document.getElementById("wishPopup").classList.remove("show");
+    }, 5000);
+  }
+});
+
+document.getElementById("wishPopup").addEventListener("click", (e) => {
+  if (e.target.id === "wishPopup") {
+    clearTimeout(window._popupTimer);
+    e.currentTarget.classList.remove("show");
+  }
+});
+
+const tanzakuQuery = query(ref(db, "tanabata/tanzaku"), limitToLast(MAX_TANZAKU));
+onValue(tanzakuQuery, (snapshot) => {
+  const data = snapshot.val() || {};
+  const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
+  items.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  renderList(items);
+});
+</script>
+</body>
+</html>

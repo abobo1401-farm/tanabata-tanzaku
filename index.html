@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>七夕 短冊づくり🎋</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0b1d3a 0%, #163a5c 50%, #0b1d3a 100%);
+    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 60px;
+  }
+  .card { width: 100%; max-width: 420px; }
+  h1 { text-align: center; font-size: 22px; margin-bottom: 4px; }
+  .sub { text-align: center; font-size: 13px; opacity: 0.7; margin-bottom: 24px; }
+  label { display: block; font-size: 14px; margin: 16px 0 6px; opacity: 0.9; }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.4); }
+  textarea { resize: none; height: 90px; line-height: 1.5; }
+  .charcount { text-align: right; font-size: 11px; opacity: 0.6; margin-top: 4px; }
+
+  .colors { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .color-dot {
+    width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
+    border: 3px solid transparent;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .color-dot.selected { border-color: #fff; transform: scale(1.12); }
+
+  .preview { margin-top: 24px; display: flex; justify-content: center; }
+  .tanzaku-preview {
+    width: 90px; min-height: 160px; border-radius: 4px; padding: 14px 8px;
+    writing-mode: vertical-rl; text-align: start; font-size: 14px; line-height: 1.7;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35); word-break: break-all;
+    display: flex; align-items: flex-start;
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4);
+  }
+
+  button#submitBtn {
+    width: 100%; margin-top: 28px; padding: 15px; border: none; border-radius: 30px;
+    background: linear-gradient(135deg, #ffd76e, #ff9d4d);
+    color: #3a2200; font-size: 16px; font-weight: bold; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(255,157,77,0.4);
+  }
+  button#submitBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .msg { text-align: center; margin-top: 14px; font-size: 13px; min-height: 18px; }
+  .msg.success { color: #8fffb0; }
+  .msg.error { color: #ff9d9d; }
+
+  .stars { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+  .star { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; opacity: 0.6; }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<!-- コード認証画面 -->
+<div class="card" id="gateCard">
+  <h1>🎋 歌推し短冊企画</h1>
+  <div class="sub">6/1〜7/7限定　歌推し収穫した人だけの特典🍎</div>
+  <label>合言葉を入力してね</label>
+  <input type="text" id="codeInput" placeholder="ABOから教えてもらった合言葉" autocomplete="off">
+  <button id="codeSubmitBtn" style="width:100%;margin-top:18px;padding:15px;border:none;border-radius:30px;background:linear-gradient(135deg,#ffd76e,#ff9d4d);color:#3a2200;font-size:16px;font-weight:bold;cursor:pointer;">入る🍎</button>
+  <div class="msg" id="gateMsg"></div>
+  <div class="sub" style="margin-top:24px;">合言葉は配信内で歌推し収穫した人にお伝えしています</div>
+</div>
+
+<div class="card" id="formCard" style="display:none;">
+  <h1>🎋 短冊に願いを書こう</h1>
+  <div class="sub">#りんご農家 七夕イベント</div>
+
+  <label>お名前（ニックネームOK）</label>
+  <input type="text" id="nameInput" maxlength="20" placeholder="例：りんご太郎">
+
+  <label>願いごと</label>
+  <textarea id="wishInput" maxlength="60" placeholder="願い事を書いてね🍎"></textarea>
+  <div class="charcount"><span id="charcount">0</span> / 60</div>
+
+  <label>短冊の色</label>
+  <div class="colors" id="colors"></div>
+
+  <div class="preview">
+    <div class="tanzaku-preview" id="previewBox">
+      <span id="previewText" style="opacity:0.5;">ここに表示されます</span>
+    </div>
+  </div>
+
+  <button id="submitBtn">短冊を笹に飾る🎋</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ⚠️ 既存の utaoshi-ringo プロジェクトの設定をここに入れてください
+const firebaseConfig = {
+  apiKey: "AIzaSyDKwFPNTgPJawD47WxuDsJH2-V1E3zWqoU",
+  authDomain: "utaoshi-ringo.firebaseapp.com",
+  databaseURL: "https://utaoshi-ringo-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "utaoshi-ringo",
+  storageBucket: "utaoshi-ringo.firebasestorage.app",
+  messagingSenderId: "572385012765",
+  appId: "1:572385012765:web:2f5542f69930f1a714eaf4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ⚠️ ここに配信内で発表する合言葉を設定してください
+const SECRET_CODE = "りんご2026";
+
+const gateCard = document.getElementById("gateCard");
+const formCard = document.getElementById("formCard");
+const codeInput = document.getElementById("codeInput");
+const codeSubmitBtn = document.getElementById("codeSubmitBtn");
+const gateMsg = document.getElementById("gateMsg");
+
+function normalize(str) {
+  return str.trim().replace(/[Ａ-Ｚａ-ｚ０-９]/g, s =>
+    String.fromCharCode(s.charCodeAt(0) - 0xFEE0)
+  ).toLowerCase();
+}
+
+codeSubmitBtn.addEventListener("click", () => {
+  const input = normalize(codeInput.value);
+  const correct = normalize(SECRET_CODE);
+  if (input === correct) {
+    gateCard.style.display = "none";
+    formCard.style.display = "block";
+  } else {
+    gateMsg.textContent = "合言葉が違うみたい...もう一度確認してね";
+    gateMsg.className = "msg error";
+  }
+});
+
+codeInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") codeSubmitBtn.click();
+});
+
+const COLORS = [
+  { name: "赤",  bg: "#e8534f", text: "#fff" },
+  { name: "黄",  bg: "#f3d34a", text: "#3a2200" },
+  { name: "緑",  bg: "#5fae6a", text: "#fff" },
+  { name: "ピンク", bg: "#f08fb0", text: "#3a0a1f" },
+  { name: "青",  bg: "#5b8fd6", text: "#fff" },
+  { name: "紫",  bg: "#a07fd6", text: "#fff" },
+];
+
+let selectedColor = COLORS[0];
+
+const colorsEl = document.getElementById("colors");
+COLORS.forEach((c, i) => {
+  const dot = document.createElement("div");
+  dot.className = "color-dot" + (i === 0 ? " selected" : "");
+  dot.style.background = c.bg;
+  dot.addEventListener("click", () => {
+    document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("selected"));
+    dot.classList.add("selected");
+    selectedColor = c;
+    updatePreview();
+  });
+  colorsEl.appendChild(dot);
+});
+
+const nameInput = document.getElementById("nameInput");
+const wishInput = document.getElementById("wishInput");
+const charcount = document.getElementById("charcount");
+const previewBox = document.getElementById("previewBox");
+const previewText = document.getElementById("previewText");
+const submitBtn = document.getElementById("submitBtn");
+const msg = document.getElementById("msg");
+
+function updatePreview() {
+  const wish = wishInput.value.trim();
+  const name = nameInput.value.trim();
+  previewBox.style.background = selectedColor.bg;
+  previewBox.style.color = selectedColor.text;
+  if (wish || name) {
+    previewText.style.opacity = "1";
+    previewText.textContent = wish + (name ? `　ー${name}` : "");
+  } else {
+    previewText.style.opacity = "0.5";
+    previewText.textContent = "ここに表示されます";
+  }
+}
+
+wishInput.addEventListener("input", () => {
+  charcount.textContent = wishInput.value.length;
+  updatePreview();
+});
+nameInput.addEventListener("input", updatePreview);
+
+submitBtn.addEventListener("click", async () => {
+  const name = nameInput.value.trim() || "名無し";
+  const wish = wishInput.value.trim();
+
+  if (!wish) {
+    showMsg("願い事を入力してね🙏", "error");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  showMsg("送信中...", "");
+
+  try {
+    await push(ref(db, "tanabata/tanzaku"), {
+      name: name,
+      wish: wish,
+      color: selectedColor.bg,
+      textColor: selectedColor.text,
+      createdAt: serverTimestamp()
+    });
+    showMsg("短冊を飾りました🎋✨", "success");
+    wishInput.value = "";
+    charcount.textContent = "0";
+    updatePreview();
+  } catch (e) {
+    console.error(e);
+    showMsg("送信に失敗しました。もう一度試してね", "error");
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+function showMsg(text, type) {
+  msg.textContent = text;
+  msg.className = "msg " + type;
+}
+
+const starsEl = document.getElementById("stars");
+for (let i = 0; i < 60; i++) {
+  const s = document.createElement("div");
+  s.className = "star";
+  s.style.left = Math.random() * 100 + "%";
+  s.style.top = Math.random() * 100 + "%";
+  s.style.opacity = (Math.random() * 0.6 + 0.2).toFixed(2);
+  s.style.width = s.style.height = (Math.random() * 2 + 1) + "px";
+  starsEl.appendChild(s);
+}
+
+updatePreview();
+</script>
+</body>
+</html>
