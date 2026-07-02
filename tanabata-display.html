@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0057)file:///C:/Users/abobo/Downloads/tanabata-display_21.html -->
+<!-- saved from url=(0057)file:///C:/Users/abobo/Downloads/tanabata-display_22.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <title>七夕 短冊ディスプレイ</title>
@@ -272,10 +272,10 @@
 </head>
 <body>
 <div id="stage">
-  <div id="starLayer"><div class="star-item" style="left: 103.864px; top: 169.829px; animation-delay: 1.99079s;"><div class="star-icon">⭐</div><div class="star-name">お願いマッスル</div></div></div>
+  <div id="starLayer"><div class="star-item" style="left: 804.55px; top: 637.028px; animation-delay: 0.458324s;"><div class="star-icon">⭐</div><div class="star-name">はぴたま</div></div><div class="star-item" style="left: 186.136px; top: 747.139px; animation-delay: 0.0966567s;"><div class="star-icon">⭐</div><div class="star-name">はぴたま</div></div><div class="star-item" style="left: 116.325px; top: 694.302px; animation-delay: 0.60595s;"><div class="star-icon">⭐</div><div class="star-name">まさじゅ</div></div><div class="star-item" style="left: 154.159px; top: 593.793px; animation-delay: 0.567931s;"><div class="star-icon">⭐</div><div class="star-name">はぴたま</div></div><div class="star-item" style="left: 353.284px; top: 363.961px; animation-delay: 0.919939s;"><div class="star-icon">⭐</div><div class="star-name">はぴたま</div></div><div class="star-item" style="left: 879.949px; top: 401.217px; animation-delay: 0.388947s;"><div class="star-icon">⭐</div><div class="star-name">まさじゅ</div></div><div class="star-item" style="left: 961.824px; top: 367.294px; animation-delay: 1.36643s;"><div class="star-icon">⭐</div><div class="star-name">まさじゅ</div></div><div class="star-item" style="left: 350.935px; top: 612.367px; animation-delay: 1.13856s;"><div class="star-icon">⭐</div><div class="star-name">はぴたま</div></div></div>
   <img class="sasa sasa-left" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
   <img class="sasa sasa-right" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
-</div>
+<div class="tanzaku" style="left: 179.938px; top: 1427.6px; background: rgb(91, 143, 214); color: rgb(255, 255, 255); animation-delay: 1.9729s; --sway: 3.1deg;"><div class="wish-text">推しが配信してくれますように！</div><div class="name-tag">なっちゃん</div></div><div class="tanzaku" style="left: 949.883px; top: 963.722px; background: rgb(95, 174, 106); color: rgb(255, 255, 255); animation-delay: 1.59872s; --sway: 3.0deg;"><div class="wish-text">爆ぜろ</div><div class="name-tag">まさじゅ</div></div><div class="tanzaku" style="left: 562.275px; top: 638.171px; background: rgb(95, 174, 106); color: rgb(255, 255, 255); animation-delay: 1.25769s; --sway: 2.7deg;"><div class="wish-text">＼レッツ／＼フレッシュ／＼リフレッシュ／が順番にきますように</div><div class="name-tag">まさじゅ</div></div></div>
 
 <div id="wishPopup">
   <div class="popup-card" id="popupCard">
@@ -557,7 +557,9 @@ function showFailure() {
 
   const video = document.getElementById("explosionVideo");
   video.classList.add("show");
+  video.pause();
   video.currentTime = 0;
+  video.load();
   video.play().catch(() => { fallbackExplosion(); });
   video.onended = () => { video.classList.remove("show"); video.onended = null; };
   setTimeout(() => {
