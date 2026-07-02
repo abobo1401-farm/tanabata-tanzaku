@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- saved from url=(0057)file:///C:/Users/abobo/Downloads/tanabata-display_13.html -->
+<!-- saved from url=(0057)file:///C:/Users/abobo/Downloads/tanabata-display_14.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <title>七夕 短冊ディスプレイ</title>
-<link href="./七夕 短冊ディスプレイ_files/css2" rel="stylesheet">
+<link href="./tanabata-display_files/css2" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -268,10 +268,10 @@
 </head>
 <body>
 <div id="stage">
-  <div id="starLayer"><div class="star-item" style="left: 540.852px; top: 195.805px; animation-delay: 0.503626s;"><div class="star-icon">⭐</div><div class="star-name">ABO</div></div></div>
+  <div id="starLayer"></div>
   <img class="sasa sasa-left" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
   <img class="sasa sasa-right" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
-<div class="tanzaku" style="left: 272.174px; top: 1289.89px; background: rgb(243, 211, 74); color: rgb(58, 34, 0); animation-delay: 1.59451s; --sway: 3.8deg;"><div class="wish-text">おいしいりんごたべたい</div><div class="name-tag">ABO</div><div class="launched-mark">☆</div></div><div class="tanzaku" style="left: 735.868px; top: 1459.48px; background: rgb(240, 143, 176); color: rgb(255, 255, 255); animation-delay: 2.12617s; --sway: 4.1deg;"><div class="wish-text">りんごを食べる鳥をやっつけられますように！！</div><div class="name-tag">ABO</div></div><div class="tanzaku" style="left: 536.691px; top: 792.58px; background: rgb(232, 83, 79); color: rgb(255, 255, 255); animation-delay: 2.05844s; --sway: 5.0deg;"><div class="wish-text">おいしいりんごたべたい</div><div class="name-tag">ABO</div></div></div>
+</div>
 
 <div id="wishPopup">
   <div class="popup-card" id="popupCard">
@@ -355,26 +355,14 @@ let isInitialLoad = true;
 // ===== 短冊レンダリング =====
 function renderList(items) {
   const currentIds = new Set(items.map(it => it.id));
-  for (const [id, el] of tanzakuEls.entries()) {
-    if (!currentIds.has(id)) { el.remove(); tanzakuEls.delete(id); }
-  }
 
+  // 消えた短冊をDOMから削除
+  const toDelete = [...tanzakuEls.entries()].filter(([id]) => !currentIds.has(id));
+  toDelete.forEach(([id, el]) => { el.remove(); tanzakuEls.delete(id); });
+
+  // 新しい短冊を追加
   items.forEach((item, idx) => {
-    // 星レイヤーの更新（launched済みのものは星として表示）
-    updateStarDisplay(item);
-
-    if (tanzakuEls.has(item.id)) {
-      // 既存短冊の☆マーク更新
-      const el = tanzakuEls.get(item.id);
-      const existingMark = el.querySelector(".launched-mark");
-      if (item.launched && !existingMark) {
-        const mark = document.createElement("div");
-        mark.className = "launched-mark";
-        mark.textContent = "☆";
-        el.appendChild(mark);
-      }
-      return;
-    }
+    if (tanzakuEls.has(item.id)) return;
 
     const pos = POSITIONS[idx % POSITIONS.length];
     const el = document.createElement("div");
@@ -389,46 +377,17 @@ function renderList(items) {
     const wishSpan = document.createElement("div");
     wishSpan.className = "wish-text";
     wishSpan.textContent = item.wish;
-
     const nameSpan = document.createElement("div");
     nameSpan.className = "name-tag";
     nameSpan.textContent = item.name;
-
     el.appendChild(wishSpan);
     el.appendChild(nameSpan);
-
-    if (item.launched) {
-      const mark = document.createElement("div");
-      mark.className = "launched-mark";
-      mark.textContent = "☆";
-      el.appendChild(mark);
-    }
-
     el.addEventListener("click", () => showPopup(item));
     stage.appendChild(el);
     tanzakuEls.set(item.id, el);
   });
 
   isInitialLoad = false;
-}
-
-// ===== 星表示 =====
-function updateStarDisplay(item) {
-  if (!item.launched) {
-    if (starEls.has(item.id)) { starEls.get(item.id).remove(); starEls.delete(item.id); }
-    return;
-  }
-  if (starEls.has(item.id)) return;
-
-  const pos = getStarPosition(item.id);
-  const el = document.createElement("div");
-  el.className = "star-item";
-  el.style.left = pos.x + "px";
-  el.style.top = pos.y + "px";
-  el.style.animationDelay = pos.delay + "s";
-  el.innerHTML = `<div class="star-icon">⭐</div><div class="star-name">${item.name}</div>`;
-  starLayer.appendChild(el);
-  starEls.set(item.id, el);
 }
 
 // ===== ポップアップ =====
@@ -619,13 +578,38 @@ function fallbackExplosion() {
   setTimeout(() => failText.classList.remove("show"), 1700);
 }
 
-// ===== Firebase リアルタイム =====
+// ===== Firebase リアルタイム（短冊） =====
 const tanzakuQuery = query(ref(db, "tanabata/tanzaku"), limitToLast(MAX_TANZAKU));
 onValue(tanzakuQuery, (snapshot) => {
   const data = snapshot.val() || {};
   const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
   items.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
   renderList(items);
+});
+
+// ===== Firebase リアルタイム（星） =====
+onValue(ref(db, "tanabata/stars"), (snapshot) => {
+  const data = snapshot.val() || {};
+  const starIds = new Set(Object.keys(data));
+
+  // 消えた星を削除
+  [...starEls.entries()]
+    .filter(([id]) => !starIds.has(id))
+    .forEach(([id, el]) => { el.remove(); starEls.delete(id); });
+
+  // 新しい星を追加
+  Object.entries(data).forEach(([id, v]) => {
+    if (starEls.has(id)) return;
+    const pos = getStarPosition(id);
+    const el = document.createElement("div");
+    el.className = "star-item";
+    el.style.left = pos.x + "px";
+    el.style.top = pos.y + "px";
+    el.style.animationDelay = pos.delay + "s";
+    el.innerHTML = `<div class="star-icon">⭐</div><div class="star-name">${v.name || ""}</div>`;
+    starLayer.appendChild(el);
+    starEls.set(id, el);
+  });
 });
 </script>
 
