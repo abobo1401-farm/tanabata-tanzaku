@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/abobo/Downloads/tanabata-display_4.html -->
+<!-- saved from url=(0057)file:///C:/Users/abobo/Downloads/tanabata-display_13.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <title>七夕 短冊ディスプレイ</title>
@@ -90,7 +90,8 @@
     width: 2px; height: 14px;
     background: rgba(255,255,255,0.7);
   }
-  .tanzaku .name-tag { font-size: 11px; opacity: 0.75; margin-top: 6px; }
+  .tanzaku .wish-text { visibility: hidden; }
+  .tanzaku .name-tag { display: none; }
   .tanzaku .wish-text { white-space: nowrap; }
   .tanzaku .launched-mark {
     position: absolute;
@@ -108,12 +109,13 @@
   /* ===== ポップアップ ===== */
   #wishPopup {
     position: fixed; inset: 0;
-    display: none; align-items: center; justify-content: center;
+    display: none; align-items: flex-start; justify-content: center;
+    padding-top: 120px;
     z-index: 100; background: rgba(0,0,0,0.5);
   }
   #wishPopup.show { display: flex; }
   .popup-card {
-    width: 640px; padding: 48px 40px;
+    width: 640px; padding: 40px 40px 36px;
     border-radius: 24px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.4);
     text-align: center;
@@ -137,7 +139,7 @@
     letter-spacing: 4px;
     opacity: 0.95;
     writing-mode: horizontal-tb; cursor: pointer;
-    position: relative; min-height: 52px;
+    position: relative; min-height: 90px;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 28px;
   }
@@ -145,8 +147,9 @@
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
     opacity: 0; transition: opacity 0.6s ease;
-    font-size: 48px;
-    text-shadow: 0 0 20px rgba(255,255,255,0.6);
+    font-size: 80px;
+    letter-spacing: 6px;
+    text-shadow: 0 0 24px rgba(255,255,255,0.7);
   }
   .popup-card .pname.revealed .name-real { opacity: 1; }
   .popup-card .pname .name-placeholder {
@@ -243,21 +246,32 @@
     transform: translate(-50%, -50%);
     font-size: 64px; font-weight: bold;
     color: #ff6b6b; text-shadow: 0 0 20px rgba(255,80,80,0.8);
-    z-index: 200; pointer-events: none;
+    z-index: 210; pointer-events: none;
     display: none;
   }
   #failText.show {
     display: block;
     animation: burstPop 1.6s ease forwards;
   }
+
+  /* 爆発映像 */
+  #explosionVideo {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 200; pointer-events: none;
+    display: none;
+    background: #000;
+  }
+  #explosionVideo.show { display: block; }
 </style>
 </head>
 <body>
 <div id="stage">
-  <div id="starLayer"></div>
+  <div id="starLayer"><div class="star-item" style="left: 540.852px; top: 195.805px; animation-delay: 0.503626s;"><div class="star-icon">⭐</div><div class="star-name">ABO</div></div></div>
   <img class="sasa sasa-left" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
   <img class="sasa sasa-right" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
-<div class="tanzaku" style="left: 300.863px; top: 1493.42px; background: rgb(232, 83, 79); color: rgb(255, 255, 255); animation-delay: 2.44976s; --sway: 3.9deg;"><div class="wish-text">おいしいりんご採れますように</div><div class="name-tag">ABO</div></div></div>
+<div class="tanzaku" style="left: 272.174px; top: 1289.89px; background: rgb(243, 211, 74); color: rgb(58, 34, 0); animation-delay: 1.59451s; --sway: 3.8deg;"><div class="wish-text">おいしいりんごたべたい</div><div class="name-tag">ABO</div><div class="launched-mark">☆</div></div><div class="tanzaku" style="left: 735.868px; top: 1459.48px; background: rgb(240, 143, 176); color: rgb(255, 255, 255); animation-delay: 2.12617s; --sway: 4.1deg;"><div class="wish-text">りんごを食べる鳥をやっつけられますように！！</div><div class="name-tag">ABO</div></div><div class="tanzaku" style="left: 536.691px; top: 792.58px; background: rgb(232, 83, 79); color: rgb(255, 255, 255); animation-delay: 2.05844s; --sway: 5.0deg;"><div class="wish-text">おいしいりんごたべたい</div><div class="name-tag">ABO</div></div></div>
 
 <div id="wishPopup">
   <div class="popup-card" id="popupCard">
@@ -274,10 +288,11 @@
 <div id="explosion">💥</div>
 <div id="successBurst"><div class="success-text">⭐ 星になった！ ⭐</div></div>
 <div id="failText">💥 撃ち落とされた…</div>
+<video id="explosionVideo" src="explosion.mp4" playsinline=""></video>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, query, limitToLast, onValue, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, query, limitToLast, onValue, push, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKwFPNTgPJawD47WxuDsJH2-V1E3zWqoU",
@@ -495,8 +510,57 @@ document.getElementById("launchBtn").addEventListener("click", () => {
   }, 1600);
 });
 
+// ===== 効果音 =====
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx || audioCtx.state === "closed") {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audioCtx = new AC();
+  }
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+function playSuccessSound() {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  // キラキラ上昇音（複数の音を重ねる）
+  const notes = [523, 659, 784, 1047, 1319];
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, now + i * 0.12);
+    gain.gain.setValueAtTime(0.0001, now + i * 0.12);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + i * 0.12 + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.3);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now + i * 0.12);
+    osc.stop(now + i * 0.12 + 0.35);
+  });
+  // キラキラ高音（三角波）
+  const shimmer = ctx.createOscillator();
+  const shimmerGain = ctx.createGain();
+  shimmer.type = "triangle";
+  shimmer.frequency.setValueAtTime(2093, now + 0.3);
+  shimmer.frequency.exponentialRampToValueAtTime(4186, now + 0.9);
+  shimmerGain.gain.setValueAtTime(0.0001, now + 0.3);
+  shimmerGain.gain.exponentialRampToValueAtTime(0.12, now + 0.4);
+  shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
+  shimmer.connect(shimmerGain);
+  shimmerGain.connect(ctx.destination);
+  shimmer.start(now + 0.3);
+  shimmer.stop(now + 1.1);
+}
+
+
 // ===== 成功演出 =====
 function showSuccess(item) {
+  playSuccessSound();
+
   // 流れ星
   for (let i = 0; i < 5; i++) {
     const s = document.createElement("div");
@@ -515,20 +579,35 @@ function showSuccess(item) {
   burst.classList.add("show");
   setTimeout(() => burst.classList.remove("show"), 2000);
 
-  // Firebaseに書き込み（launchedフラグ）
-  update(ref(db, `tanabata/tanzaku/${item.id}`), { launched: true }).then(() => {
-    // 星をFirebaseに追加保存
-    push(ref(db, "tanabata/stars"), {
-      name: item.name,
-      wish: item.wish,
-      tanzakuId: item.id,
-      createdAt: serverTimestamp()
-    });
+  // 星を先に保存してから短冊を削除
+  push(ref(db, "tanabata/stars"), {
+    name: item.name,
+    wish: item.wish,
+    color: item.color || "#e8534f",
+    createdAt: serverTimestamp()
+  }).then(() => {
+    remove(ref(db, `tanabata/tanzaku/${item.id}`));
   });
 }
 
 // ===== 失敗演出 =====
 function showFailure() {
+  // 失敗時も短冊を削除
+  if (currentItem) {
+    remove(ref(db, `tanabata/tanzaku/${currentItem.id}`));
+  }
+
+  const video = document.getElementById("explosionVideo");
+  video.classList.add("show");
+  video.currentTime = 0;
+  video.play().catch(() => { fallbackExplosion(); });
+  video.onended = () => { video.classList.remove("show"); video.onended = null; };
+  setTimeout(() => {
+    if (video.classList.contains("show")) { video.pause(); video.classList.remove("show"); }
+  }, 5000);
+}
+
+function fallbackExplosion() {
   const explosion = document.getElementById("explosion");
   explosion.style.left = "540px";
   explosion.style.top = "400px";
