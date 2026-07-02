@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0057)file:///C:/Users/abobo/Downloads/tanabata-display_14.html -->
+<!-- saved from url=(0057)file:///C:/Users/abobo/Downloads/tanabata-display_15.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <title>七夕 短冊ディスプレイ</title>
@@ -268,10 +268,10 @@
 </head>
 <body>
 <div id="stage">
-  <div id="starLayer"></div>
+  <div id="starLayer"><div class="star-item" style="left: 116.723px; top: 193.593px; animation-delay: 1.7572s;"><div class="star-icon">⭐</div><div class="star-name">テスト</div></div><div class="star-item" style="left: 967.659px; top: 787.267px; animation-delay: 1.32601s;"><div class="star-icon">⭐</div><div class="star-name">テスト</div></div></div>
   <img class="sasa sasa-left" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
   <img class="sasa sasa-right" src="file:///C:/Users/abobo/Downloads/sasa.png" alt="">
-</div>
+<div class="tanzaku" style="left: 112.073px; top: 1702.89px; background: rgb(95, 174, 106); color: rgb(255, 255, 255); animation-delay: 0.159226s; --sway: 3.7deg;"><div class="wish-text">テスト</div><div class="name-tag">テスト</div></div></div>
 
 <div id="wishPopup">
   <div class="popup-card" id="popupCard">
@@ -311,13 +311,13 @@ const MAX_TANZAKU = 50;
 const stage = document.getElementById("stage");
 const starLayer = document.getElementById("starLayer");
 
-// ===== 短冊配置 =====
+// ===== 短冊配置（画面下半分） =====
 const POSITIONS = generatePositions(MAX_TANZAKU);
 function generatePositions(count) {
   const zones = [
-    { xMin: 60,  xMax: 420, yMin: 400, yMax: 1500 },
-    { xMin: 620, xMax: 1000, yMin: 400, yMax: 1500 },
-    { xMin: 380, xMax: 700, yMin: 350, yMax: 900 },
+    { xMin: 60,  xMax: 420, yMin: 600, yMax: 1800 },
+    { xMin: 620, xMax: 1000, yMin: 600, yMax: 1800 },
+    { xMin: 380, xMax: 700, yMin: 600, yMax: 1600 },
   ];
   return Array.from({ length: count }, (_, i) => {
     const zone = zones[i % zones.length];
@@ -330,8 +330,8 @@ function generatePositions(count) {
   });
 }
 
-// ===== 星配置エリア（画面上部） =====
-const STAR_ZONES = { xMin: 60, xMax: 1020, yMin: 40, yMax: 340 };
+// ===== 星配置エリア（画面全体に散らばる） =====
+const STAR_ZONES = { xMin: 40, xMax: 1040, yMin: 30, yMax: 860 };
 const starPositions = new Map(); // id -> {x, y}
 function getStarPosition(id) {
   if (!starPositions.has(id)) {
