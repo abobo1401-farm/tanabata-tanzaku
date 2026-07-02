@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)file:///C:/Users/abobo/Downloads/tanabata-stars.html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="./七夕 星カウント_files/css2" rel="stylesheet">
+<title>七夕 星カウント</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0b1d3a 0%, #163a5c 50%, #0b1d3a 100%);
+    font-family: "Zen Kurenaido", "Hiragino Sans", sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 60px;
+  }
+  h1 { font-size: 24px; margin-bottom: 6px; opacity: 0.9; }
+  .sub { font-size: 13px; opacity: 0.6; margin-bottom: 36px; }
+
+  .count-box {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,200,80,0.4);
+    border-radius: 24px;
+    padding: 32px 48px;
+    text-align: center;
+    margin-bottom: 36px;
+    box-shadow: 0 0 30px rgba(255,200,80,0.15);
+  }
+  .count-label { font-size: 16px; opacity: 0.8; margin-bottom: 8px; }
+  .count-num {
+    font-size: 96px;
+    font-weight: bold;
+    color: #ffe9a8;
+    text-shadow: 0 0 24px rgba(255,220,120,0.8);
+    line-height: 1;
+  }
+  .count-unit { font-size: 28px; opacity: 0.8; margin-top: 8px; }
+
+  .star-list {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .star-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,200,80,0.2);
+  }
+  .star-icon { font-size: 24px; }
+  .star-info { flex: 1; }
+  .star-name { font-size: 20px; color: #ffe9a8; }
+  .star-wish { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+  .empty { opacity: 0.5; font-size: 15px; padding: 40px; }
+
+  .stars-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+  .bg-star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle linear infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="stars-bg" id="starsBg"><div class="bg-star" style="width: 2.87522px; height: 2.87522px; left: 87.674%; top: 5.65255%; animation-duration: 2.82442s; animation-delay: 2.49508s;"></div><div class="bg-star" style="width: 2.78893px; height: 2.78893px; left: 66.2009%; top: 56.0461%; animation-duration: 3.7467s; animation-delay: 0.634007s;"></div><div class="bg-star" style="width: 1.90456px; height: 1.90456px; left: 7.96376%; top: 60.5657%; animation-duration: 3.05404s; animation-delay: 1.49558s;"></div><div class="bg-star" style="width: 2.1792px; height: 2.1792px; left: 41.3887%; top: 73.4908%; animation-duration: 2.70533s; animation-delay: 1.07664s;"></div><div class="bg-star" style="width: 2.48742px; height: 2.48742px; left: 75.7669%; top: 51.7783%; animation-duration: 3.77787s; animation-delay: 0.743918s;"></div><div class="bg-star" style="width: 2.84873px; height: 2.84873px; left: 86.1207%; top: 43.3806%; animation-duration: 2.92652s; animation-delay: 1.03592s;"></div><div class="bg-star" style="width: 2.18515px; height: 2.18515px; left: 91.9177%; top: 74.0431%; animation-duration: 3.55749s; animation-delay: 2.67421s;"></div><div class="bg-star" style="width: 1.18883px; height: 1.18883px; left: 82.7245%; top: 6.51886%; animation-duration: 3.0078s; animation-delay: 2.55133s;"></div><div class="bg-star" style="width: 2.74069px; height: 2.74069px; left: 87.609%; top: 76.5541%; animation-duration: 3.23962s; animation-delay: 1.14293s;"></div><div class="bg-star" style="width: 2.02481px; height: 2.02481px; left: 93.7837%; top: 92.0243%; animation-duration: 4.14013s; animation-delay: 2.30603s;"></div><div class="bg-star" style="width: 1.35946px; height: 1.35946px; left: 12.6902%; top: 37.0365%; animation-duration: 4.01566s; animation-delay: 1.96168s;"></div><div class="bg-star" style="width: 2.72295px; height: 2.72295px; left: 60.5252%; top: 84.5306%; animation-duration: 4.07125s; animation-delay: 1.09731s;"></div><div class="bg-star" style="width: 2.34599px; height: 2.34599px; left: 63.0385%; top: 64.8874%; animation-duration: 2.50382s; animation-delay: 1.34933s;"></div><div class="bg-star" style="width: 1.53576px; height: 1.53576px; left: 24.8732%; top: 59.6704%; animation-duration: 4.03556s; animation-delay: 2.77548s;"></div><div class="bg-star" style="width: 1.50684px; height: 1.50684px; left: 78.0304%; top: 3.51294%; animation-duration: 4.62993s; animation-delay: 1.04685s;"></div><div class="bg-star" style="width: 1.22585px; height: 1.22585px; left: 36.0847%; top: 12.5331%; animation-duration: 4.50948s; animation-delay: 2.81808s;"></div><div class="bg-star" style="width: 1.96023px; height: 1.96023px; left: 14.9455%; top: 4.72428%; animation-duration: 3.73401s; animation-delay: 0.799006s;"></div><div class="bg-star" style="width: 2.14817px; height: 2.14817px; left: 45.7537%; top: 52.1364%; animation-duration: 3.87094s; animation-delay: 0.78138s;"></div><div class="bg-star" style="width: 1.39325px; height: 1.39325px; left: 21.9246%; top: 43.4422%; animation-duration: 2.34419s; animation-delay: 2.52469s;"></div><div class="bg-star" style="width: 1.68538px; height: 1.68538px; left: 65.4318%; top: 56.4779%; animation-duration: 4.33791s; animation-delay: 0.24174s;"></div><div class="bg-star" style="width: 1.52146px; height: 1.52146px; left: 13.6037%; top: 84.4176%; animation-duration: 2.69646s; animation-delay: 1.52492s;"></div><div class="bg-star" style="width: 1.2218px; height: 1.2218px; left: 5.89479%; top: 28.4657%; animation-duration: 4.84303s; animation-delay: 0.00178305s;"></div><div class="bg-star" style="width: 1.99077px; height: 1.99077px; left: 42.3125%; top: 41.6768%; animation-duration: 4.27679s; animation-delay: 1.06435s;"></div><div class="bg-star" style="width: 1.07752px; height: 1.07752px; left: 2.1828%; top: 33.1375%; animation-duration: 2.86978s; animation-delay: 0.713457s;"></div><div class="bg-star" style="width: 2.69152px; height: 2.69152px; left: 19.7859%; top: 73.0906%; animation-duration: 4.62449s; animation-delay: 1.92837s;"></div><div class="bg-star" style="width: 1.84762px; height: 1.84762px; left: 8.67309%; top: 58.1616%; animation-duration: 2.98849s; animation-delay: 0.192195s;"></div><div class="bg-star" style="width: 2.53794px; height: 2.53794px; left: 2.54829%; top: 58.8851%; animation-duration: 4.00343s; animation-delay: 2.20347s;"></div><div class="bg-star" style="width: 1.86499px; height: 1.86499px; left: 45.2146%; top: 25.5337%; animation-duration: 2.97199s; animation-delay: 2.51274s;"></div><div class="bg-star" style="width: 2.62291px; height: 2.62291px; left: 13.4115%; top: 67.8594%; animation-duration: 4.02593s; animation-delay: 1.78881s;"></div><div class="bg-star" style="width: 1.1745px; height: 1.1745px; left: 46.3768%; top: 68.6645%; animation-duration: 2.90386s; animation-delay: 0.203995s;"></div><div class="bg-star" style="width: 1.11884px; height: 1.11884px; left: 83.2992%; top: 33.027%; animation-duration: 3.42845s; animation-delay: 1.43733s;"></div><div class="bg-star" style="width: 1.45581px; height: 1.45581px; left: 77.4638%; top: 96.8822%; animation-duration: 2.52457s; animation-delay: 2.60444s;"></div><div class="bg-star" style="width: 2.77325px; height: 2.77325px; left: 63.2023%; top: 50.2556%; animation-duration: 4.56545s; animation-delay: 1.88768s;"></div><div class="bg-star" style="width: 2.34277px; height: 2.34277px; left: 31.4603%; top: 18.8469%; animation-duration: 2.20939s; animation-delay: 1.69786s;"></div><div class="bg-star" style="width: 1.73924px; height: 1.73924px; left: 11.0871%; top: 36.1012%; animation-duration: 3.83231s; animation-delay: 2.03863s;"></div><div class="bg-star" style="width: 2.4627px; height: 2.4627px; left: 12.2136%; top: 45.3109%; animation-duration: 3.13638s; animation-delay: 0.747167s;"></div><div class="bg-star" style="width: 1.25935px; height: 1.25935px; left: 97.1196%; top: 66.2578%; animation-duration: 4.58738s; animation-delay: 0.818835s;"></div><div class="bg-star" style="width: 1.96974px; height: 1.96974px; left: 66.9083%; top: 26.8124%; animation-duration: 2.3423s; animation-delay: 2.05522s;"></div><div class="bg-star" style="width: 2.68522px; height: 2.68522px; left: 54.6454%; top: 16.0507%; animation-duration: 2.04372s; animation-delay: 0.549773s;"></div><div class="bg-star" style="width: 2.64671px; height: 2.64671px; left: 60.0445%; top: 2.39044%; animation-duration: 3.88922s; animation-delay: 1.11784s;"></div><div class="bg-star" style="width: 2.79394px; height: 2.79394px; left: 46.3793%; top: 41.7026%; animation-duration: 4.6927s; animation-delay: 2.21842s;"></div><div class="bg-star" style="width: 1.51692px; height: 1.51692px; left: 80.3143%; top: 2.06487%; animation-duration: 4.70688s; animation-delay: 1.15011s;"></div><div class="bg-star" style="width: 2.13491px; height: 2.13491px; left: 9.4301%; top: 58.8164%; animation-duration: 4.36461s; animation-delay: 0.296084s;"></div><div class="bg-star" style="width: 1.61751px; height: 1.61751px; left: 49.6881%; top: 76.8453%; animation-duration: 3.13264s; animation-delay: 2.66478s;"></div><div class="bg-star" style="width: 2.82767px; height: 2.82767px; left: 92.5952%; top: 67.8088%; animation-duration: 2.13116s; animation-delay: 2.91698s;"></div><div class="bg-star" style="width: 1.56703px; height: 1.56703px; left: 63.2602%; top: 11.572%; animation-duration: 2.90296s; animation-delay: 0.499652s;"></div><div class="bg-star" style="width: 1.88424px; height: 1.88424px; left: 46.1528%; top: 72.2361%; animation-duration: 2.50487s; animation-delay: 0.132086s;"></div><div class="bg-star" style="width: 1.70111px; height: 1.70111px; left: 87.8475%; top: 23.6622%; animation-duration: 3.04496s; animation-delay: 2.48936s;"></div><div class="bg-star" style="width: 1.95923px; height: 1.95923px; left: 91.5457%; top: 76.3216%; animation-duration: 2.73397s; animation-delay: 0.86022s;"></div><div class="bg-star" style="width: 1.37751px; height: 1.37751px; left: 46.4777%; top: 80.7743%; animation-duration: 3.95755s; animation-delay: 2.07048s;"></div><div class="bg-star" style="width: 2.04849px; height: 2.04849px; left: 14.8966%; top: 85.2538%; animation-duration: 2.33865s; animation-delay: 0.931084s;"></div><div class="bg-star" style="width: 1.85307px; height: 1.85307px; left: 38.291%; top: 81.7395%; animation-duration: 3.06024s; animation-delay: 1.3934s;"></div><div class="bg-star" style="width: 1.38686px; height: 1.38686px; left: 92.2247%; top: 15.416%; animation-duration: 4.21647s; animation-delay: 0.10414s;"></div><div class="bg-star" style="width: 1.83604px; height: 1.83604px; left: 91.7135%; top: 52.693%; animation-duration: 3.33297s; animation-delay: 2.21235s;"></div><div class="bg-star" style="width: 2.71506px; height: 2.71506px; left: 88.8673%; top: 39.5768%; animation-duration: 2.10108s; animation-delay: 2.97833s;"></div><div class="bg-star" style="width: 1.83364px; height: 1.83364px; left: 93.1204%; top: 2.22095%; animation-duration: 3.89989s; animation-delay: 0.505413s;"></div><div class="bg-star" style="width: 1.31616px; height: 1.31616px; left: 13.8215%; top: 44.8551%; animation-duration: 2.10091s; animation-delay: 2.96069s;"></div><div class="bg-star" style="width: 1.52642px; height: 1.52642px; left: 98.6933%; top: 47.9085%; animation-duration: 3.44478s; animation-delay: 1.32919s;"></div><div class="bg-star" style="width: 2.43665px; height: 2.43665px; left: 8.71898%; top: 28.9833%; animation-duration: 3.61992s; animation-delay: 0.549834s;"></div><div class="bg-star" style="width: 2.9131px; height: 2.9131px; left: 79.7231%; top: 12.6675%; animation-duration: 3.39308s; animation-delay: 2.9714s;"></div></div>
+
+<h1>⭐ 星になった願い事</h1>
+<div class="sub">打ち上げ成功した短冊の星たち</div>
+
+<div class="count-box">
+  <div class="count-label">現在の星の数</div>
+  <div class="count-num" id="countNum">2</div>
+  <div class="count-unit">個</div>
+</div>
+
+<div class="star-list" id="starList"><div class="star-item">
+      <div class="star-icon">⭐</div>
+      <div class="star-info">
+        <div class="star-name">テスト</div>
+        <div class="star-wish">テストｵﾜﾀ＼(^o^)／</div>
+      </div>
+    </div><div class="star-item">
+      <div class="star-icon">⭐</div>
+      <div class="star-info">
+        <div class="star-name">テスト</div>
+        <div class="star-wish">りんご</div>
+      </div>
+    </div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDKwFPNTgPJawD47WxuDsJH2-V1E3zWqoU",
+  authDomain: "utaoshi-ringo.firebaseapp.com",
+  databaseURL: "https://utaoshi-ringo-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "utaoshi-ringo",
+  storageBucket: "utaoshi-ringo.firebasestorage.app",
+  messagingSenderId: "572385012765",
+  appId: "1:572385012765:web:2f5542f69930f1a714eaf4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+onValue(ref(db, "tanabata/stars"), (snapshot) => {
+  const data = snapshot.val() || {};
+  const items = Object.entries(data)
+    .map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  document.getElementById("countNum").textContent = items.length;
+
+  const list = document.getElementById("starList");
+  if (items.length === 0) {
+    list.innerHTML = '<div class="empty">まだ星がありません🌙</div>';
+    return;
+  }
+  list.innerHTML = "";
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "star-item";
+    div.innerHTML = `
+      <div class="star-icon">⭐</div>
+      <div class="star-info">
+        <div class="star-name">${escapeHtml(item.name)}</div>
+        <div class="star-wish">${escapeHtml(item.wish)}</div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+});
+
+function escapeHtml(str) {
+  const d = document.createElement("div");
+  d.textContent = str || "";
+  return d.innerHTML;
+}
+
+// 背景の星
+const bg = document.getElementById("starsBg");
+for (let i = 0; i < 60; i++) {
+  const s = document.createElement("div");
+  s.className = "bg-star";
+  const size = Math.random() * 2 + 1;
+  s.style.width = size + "px";
+  s.style.height = size + "px";
+  s.style.left = Math.random() * 100 + "%";
+  s.style.top = Math.random() * 100 + "%";
+  s.style.animationDuration = (2 + Math.random() * 3) + "s";
+  s.style.animationDelay = (Math.random() * 3) + "s";
+  bg.appendChild(s);
+}
+</script>
+
+
+</body></html>
