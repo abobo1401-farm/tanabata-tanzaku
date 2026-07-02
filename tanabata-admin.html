@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0054)file:///C:/Users/abobo/Downloads/tanabata-admin_4.html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>七夕 短冊 管理画面</title>
+<link href="./tanabata-admin_files/css2" rel="stylesheet">
+<title>七夕 管理画面</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -14,77 +15,177 @@
     padding: 20px 16px 60px;
   }
   h1 { font-size: 20px; margin-bottom: 4px; }
-  .sub { font-size: 13px; opacity: 0.6; margin-bottom: 20px; }
-  .count { font-size: 13px; opacity: 0.8; margin-bottom: 16px; }
-  .list { display: flex; flex-direction: column; gap: 10px; }
+  .sub { font-size: 13px; opacity: 0.6; margin-bottom: 24px; }
+
+  .reset-area { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .reset-btn {
+    flex: 1; padding: 14px; border-radius: 12px; border: none;
+    font-size: 14px; font-weight: bold; cursor: pointer; min-width: 130px;
+  }
+  .reset-btn.tanzaku { background: linear-gradient(135deg,#c44,#a33); color:#fff; }
+  .reset-btn.stars { background: linear-gradient(135deg,#2d2d8a,#1a1a4e); color:#ffe9a8; border:1px solid rgba(255,200,80,0.4); }
+  .reset-btn.all { background: linear-gradient(135deg,#555,#333); color:#fff; width:100%; flex:none; margin-bottom:20px; }
+
+  .section-title {
+    font-size: 15px; font-weight: bold;
+    margin: 24px 0 10px; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .count-badge {
+    font-size: 12px; background: rgba(255,255,255,0.15);
+    padding: 2px 8px; border-radius: 10px;
+  }
+
+  .list { display: flex; flex-direction: column; gap: 8px; }
   .item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    background: #2a2a30;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; border-radius: 12px; background: #2a2a30;
+    cursor: pointer; transition: background 0.15s;
   }
-  .swatch {
-    width: 14px;
-    height: 36px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
+  .item:active { background: #35353d; }
+  .swatch { width: 10px; height: 40px; border-radius: 3px; flex-shrink: 0; }
+  .star-icon { font-size: 20px; flex-shrink: 0; }
   .info { flex: 1; min-width: 0; }
-  .info .wish {
-    font-size: 14px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .info .wish { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .info .name { font-size: 11px; opacity: 0.6; margin-top: 2px; }
+  .btn-group { display: flex; gap: 6px; flex-shrink: 0; }
+  .launch-btn {
+    background: linear-gradient(135deg,#1a1a4e,#2d2d8a);
+    color: #ffe9a8; border: 1px solid rgba(255,200,80,0.5);
+    padding: 7px 10px; border-radius: 8px; font-size: 12px; cursor: pointer;
     white-space: nowrap;
   }
-  .info .name {
-    font-size: 11px;
-    opacity: 0.6;
-    margin-top: 2px;
+  .back-btn {
+    background: #2d6a2d; color: #8fffb0;
+    border: 1px solid #4a9a4a;
+    padding: 7px 10px; border-radius: 8px; font-size: 12px; cursor: pointer;
   }
-  .delBtn {
-    flex-shrink: 0;
-    background: #c44;
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    cursor: pointer;
+  .del-btn {
+    background: #c44; color: #fff; border: none;
+    padding: 7px 10px; border-radius: 8px; font-size: 12px; cursor: pointer;
   }
-  .delBtn:active { background: #a33; }
-  .empty {
-    text-align: center;
-    opacity: 0.5;
-    padding: 40px 0;
-    font-size: 14px;
+  .empty { text-align: center; opacity: 0.5; padding: 30px 0; font-size: 14px; }
+
+  /* ポップアップ */
+  #popup {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 24px;
   }
-  .clearAllBtn {
-    width: 100%;
-    margin-top: 24px;
-    padding: 14px;
-    border: 1px solid #c44;
-    background: transparent;
-    color: #f88;
-    border-radius: 10px;
-    font-size: 14px;
-    cursor: pointer;
+  #popup.show { display: flex; }
+  .popup-inner {
+    width: 100%; max-width: 420px;
+    border-radius: 20px; padding: 32px 28px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: popIn 0.3s ease;
   }
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .popup-wish {
+    font-family: "Zen Kurenaido", sans-serif;
+    font-size: 26px; line-height: 1.6;
+    text-align: center; margin-bottom: 16px;
+  }
+  .popup-name {
+    font-family: "Zen Kurenaido", sans-serif;
+    font-size: 18px; text-align: center;
+    opacity: 0; transition: opacity 0.5s;
+    margin-bottom: 24px; min-height: 28px;
+  }
+  .popup-name.revealed { opacity: 1; }
+  .popup-name-placeholder {
+    font-size: 13px; opacity: 0.6; text-align: center;
+    margin-bottom: 24px; cursor: pointer;
+    text-decoration: underline dotted;
+  }
+  .popup-name-placeholder.hidden { display: none; }
+  .popup-btns { display: flex; flex-direction: column; gap: 10px; }
+  .popup-launch-btn {
+    width: 100%; padding: 14px; border: none; border-radius: 14px;
+    background: linear-gradient(135deg,#1a1a4e,#2d2d8a);
+    color: #ffe9a8; font-size: 17px; font-weight: bold;
+    cursor: pointer; letter-spacing: 1px;
+  }
+  .popup-launch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .popup-close-btn {
+    width: 100%; padding: 12px; border-radius: 14px;
+    background: rgba(255,255,255,0.1); color: #fff;
+    border: none; font-size: 14px; cursor: pointer;
+  }
+
+  /* 結果表示 */
+  .result-msg {
+    text-align: center; font-size: 20px; font-weight: bold;
+    margin: 16px 0; min-height: 28px;
+  }
+  .result-msg.success { color: #ffe9a8; }
+  .result-msg.fail { color: #ff9d9d; }
 </style>
 </head>
 <body>
-<h1>🎋 短冊 管理画面</h1>
-<div class="sub">配信中の短冊削除用（不適切投稿の削除など）</div>
-<div class="count" id="count"></div>
-<div class="list" id="list"></div>
-<button class="clearAllBtn" id="clearAllBtn">全ての短冊を削除する</button>
+<h1>🎋 管理画面</h1>
+<div class="sub">短冊・星の管理、打ち上げ操作</div>
+
+<div class="reset-area">
+  <button class="reset-btn tanzaku" id="resetTanzakuBtn">🎋 短冊を全削除</button>
+  <button class="reset-btn stars" id="resetStarsBtn">⭐ 星を全削除</button>
+</div>
+<button class="reset-btn all" id="resetAllBtn">🗑️ 短冊・星を全部リセット</button>
+
+<div class="section-title">
+  🎋 短冊一覧
+  <span class="count-badge" id="tanzakuCount">0件</span>
+</div>
+<div class="list" id="tanzakuList"><div class="empty">短冊がありません</div></div>
+
+<div class="section-title">
+  ⭐ 星になった願い事
+  <span class="count-badge" id="starsCount">2個</span>
+</div>
+<div class="list" id="starsList"><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">テストｵﾜﾀ＼(^o^)／</div>
+        <div class="name">テスト</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">りんご</div>
+        <div class="name">テスト</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div></div>
+
+<!-- ポップアップ -->
+<div id="popup">
+  <div class="popup-inner" id="popupInner">
+    <div class="popup-wish" id="popupWish"></div>
+    <div class="popup-name-placeholder" id="popupNamePlaceholder">👆 タップで名前を表示</div>
+    <div class="popup-name" id="popupName"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="popup-btns">
+      <button class="popup-launch-btn" id="popupLaunchBtn">🚀 空に打ち上げる</button>
+      <button class="popup-close-btn" id="popupCloseBtn">閉じる</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, onValue, remove, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ⚠️ 既存の utaoshi-ringo プロジェクトの設定をここに入れてください
 const firebaseConfig = {
   apiKey: "AIzaSyDKwFPNTgPJawD47WxuDsJH2-V1E3zWqoU",
   authDomain: "utaoshi-ringo.firebaseapp.com",
@@ -98,55 +199,238 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const listEl = document.getElementById("list");
-const countEl = document.getElementById("count");
+let currentItem = null;
+let launchLocked = false;
 
+// ===== 効果音 =====
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx || audioCtx.state === "closed") {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audioCtx = new AC();
+  }
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function playSuccessSound() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const now = ctx.currentTime;
+  [523,659,784,1047,1319].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, now + i * 0.12);
+    gain.gain.setValueAtTime(0.0001, now + i * 0.12);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + i * 0.12 + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.3);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(now + i * 0.12); osc.stop(now + i * 0.12 + 0.35);
+  });
+}
+function playFailSound() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const now = ctx.currentTime;
+  const bufSize = ctx.sampleRate * 0.5;
+  const buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 2);
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.6, now);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+  noise.connect(g); g.connect(ctx.destination); noise.start(now);
+}
+
+// ===== ポップアップ表示 =====
+function showPopup(item) {
+  currentItem = item;
+  launchLocked = false;
+
+  document.getElementById("popupWish").textContent = item.wish;
+  document.getElementById("popupName").textContent = "ー " + item.name;
+  document.getElementById("popupName").classList.remove("revealed");
+  document.getElementById("popupNamePlaceholder").classList.remove("hidden");
+  document.getElementById("resultMsg").textContent = "";
+  document.getElementById("resultMsg").className = "result-msg";
+  document.getElementById("popupLaunchBtn").disabled = false;
+  document.getElementById("popupLaunchBtn").textContent = "🚀 空に打ち上げる";
+
+  const inner = document.getElementById("popupInner");
+  inner.style.background = item.color || "#e8534f";
+  inner.style.color = item.textColor || "#fff";
+
+  document.getElementById("popup").classList.add("show");
+}
+
+// 名前表示
+document.getElementById("popupNamePlaceholder").addEventListener("click", () => {
+  document.getElementById("popupName").classList.add("revealed");
+  document.getElementById("popupNamePlaceholder").classList.add("hidden");
+});
+
+// 閉じる
+document.getElementById("popupCloseBtn").addEventListener("click", () => {
+  document.getElementById("popup").classList.remove("show");
+});
+document.getElementById("popup").addEventListener("click", (e) => {
+  if (e.target.id === "popup") document.getElementById("popup").classList.remove("show");
+});
+
+// ===== 打ち上げ =====
+document.getElementById("popupLaunchBtn").addEventListener("click", async () => {
+  if (!currentItem || launchLocked) return;
+  launchLocked = true;
+  document.getElementById("popupLaunchBtn").disabled = true;
+  document.getElementById("popupLaunchBtn").textContent = "打ち上げ中...🚀";
+
+  await new Promise(r => setTimeout(r, 1200));
+
+  const success = Math.random() < 0.5;
+  const resultMsg = document.getElementById("resultMsg");
+  const launchBtn = document.getElementById("popupLaunchBtn");
+
+  if (success) {
+    playSuccessSound();
+    resultMsg.textContent = "⭐ 星になった！";
+    resultMsg.className = "result-msg success";
+    launchBtn.textContent = "⭐ 星になりました";
+
+    // 星に保存→短冊削除
+    await push(ref(db, "tanabata/stars"), {
+      name: currentItem.name,
+      wish: currentItem.wish,
+      color: currentItem.color || "#e8534f",
+      textColor: currentItem.textColor || "#fff",
+      createdAt: serverTimestamp()
+    });
+    await remove(ref(db, "tanabata/tanzaku/" + currentItem.id));
+
+    setTimeout(() => document.getElementById("popup").classList.remove("show"), 2500);
+  } else {
+    playFailSound();
+    resultMsg.textContent = "💥 撃ち落とされた…";
+    resultMsg.className = "result-msg fail";
+    launchBtn.textContent = "💥 失敗…";
+
+    // 失敗時も短冊を削除
+    await remove(ref(db, "tanabata/tanzaku/" + currentItem.id));
+
+    setTimeout(() => document.getElementById("popup").classList.remove("show"), 2500);
+  }
+});
+
+// ===== 短冊リスト =====
 onValue(ref(db, "tanabata/tanzaku"), (snapshot) => {
   const data = snapshot.val() || {};
-  const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
-  items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const items = Object.entries(data)
+    .map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-  countEl.textContent = `全 ${items.length} 件`;
+  document.getElementById("tanzakuCount").textContent = items.length + "件";
+  const list = document.getElementById("tanzakuList");
+  if (items.length === 0) { list.innerHTML = '<div class="empty">短冊がありません</div>'; return; }
 
-  if (items.length === 0) {
-    listEl.innerHTML = '<div class="empty">まだ短冊がありません</div>';
-    return;
-  }
-
-  listEl.innerHTML = "";
+  list.innerHTML = "";
   items.forEach(item => {
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <div class="swatch" style="background:${item.color || '#e8534f'}"></div>
+      <div class="swatch" style="background:${item.color||'#e8534f'}"></div>
       <div class="info">
-        <div class="wish">${escapeHtml(item.wish || "")}</div>
-        <div class="name">${escapeHtml(item.name || "")}</div>
+        <div class="wish">${escapeHtml(item.wish||"")}</div>
+        <div class="name">${escapeHtml(item.name||"")}</div>
       </div>
-      <button class="delBtn">削除</button>
+      <div class="btn-group">
+        <button class="launch-btn">🚀 打ち上げ</button>
+        <button class="del-btn">削除</button>
+      </div>
     `;
-    div.querySelector(".delBtn").addEventListener("click", async () => {
-      if (confirm("この短冊を削除しますか？")) {
+    div.querySelector(".launch-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      showPopup(item);
+    });
+    div.querySelector(".del-btn").addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (confirm(`「${item.wish}」を削除しますか？`)) {
         await remove(ref(db, "tanabata/tanzaku/" + item.id));
       }
     });
-    listEl.appendChild(div);
+    list.appendChild(div);
   });
 });
 
-document.getElementById("clearAllBtn").addEventListener("click", async () => {
-  if (confirm("本当に全ての短冊を削除しますか？この操作は取り消せません。")) {
-    if (confirm("最終確認：本当に全削除しますか？")) {
-      await remove(ref(db, "tanabata/tanzaku"));
-    }
+// ===== 星リスト =====
+onValue(ref(db, "tanabata/stars"), (snapshot) => {
+  const data = snapshot.val() || {};
+  const items = Object.entries(data)
+    .map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  document.getElementById("starsCount").textContent = items.length + "個";
+  const list = document.getElementById("starsList");
+  if (items.length === 0) { list.innerHTML = '<div class="empty">星がありません🌙</div>'; return; }
+
+  list.innerHTML = "";
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">${escapeHtml(item.wish||"")}</div>
+        <div class="name">${escapeHtml(item.name||"")}</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    `;
+    div.querySelector(".back-btn").addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (confirm(`「${item.wish}」を短冊に戻しますか？`)) {
+        await push(ref(db, "tanabata/tanzaku"), {
+          name: item.name, wish: item.wish,
+          color: item.color || "#e8534f",
+          textColor: item.textColor || "#fff",
+          createdAt: serverTimestamp()
+        });
+        await remove(ref(db, "tanabata/stars/" + item.id));
+      }
+    });
+    div.querySelector(".del-btn").addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (confirm(`「${item.wish}」の星を削除しますか？`)) {
+        await remove(ref(db, "tanabata/stars/" + item.id));
+      }
+    });
+    list.appendChild(div);
+  });
+});
+
+// ===== リセット =====
+document.getElementById("resetTanzakuBtn").addEventListener("click", async () => {
+  if (confirm("全ての短冊を削除しますか？") && confirm("最終確認：本当に全削除しますか？")) {
+    await remove(ref(db, "tanabata/tanzaku"));
+  }
+});
+document.getElementById("resetStarsBtn").addEventListener("click", async () => {
+  if (confirm("全ての星を削除しますか？") && confirm("最終確認：本当に全削除しますか？")) {
+    await remove(ref(db, "tanabata/stars"));
+  }
+});
+document.getElementById("resetAllBtn").addEventListener("click", async () => {
+  if (confirm("短冊・星を全部リセットしますか？") && confirm("最終確認：本当に全削除しますか？")) {
+    await remove(ref(db, "tanabata"));
   }
 });
 
 function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
+  const d = document.createElement("div");
+  d.textContent = str; return d.innerHTML;
 }
 </script>
-</body>
-</html>
+
+
+</body></html>
