@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///C:/Users/abobo/Downloads/tanabata-admin_4.html -->
+<!-- saved from url=(0054)file:///C:/Users/abobo/Downloads/tanabata-admin_6.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="./tanabata-admin_files/css2" rel="stylesheet">
+<link href="./七夕 管理画面_files/css2" rel="stylesheet">
 <title>七夕 管理画面</title>
 <style>
   * { box-sizing: border-box; }
@@ -134,7 +134,8 @@
   <button class="reset-btn tanzaku" id="resetTanzakuBtn">🎋 短冊を全削除</button>
   <button class="reset-btn stars" id="resetStarsBtn">⭐ 星を全削除</button>
 </div>
-<button class="reset-btn all" id="resetAllBtn">🗑️ 短冊・星を全部リセット</button>
+<button class="reset-btn" id="resetFailedBtn" style="width:100%;margin-bottom:4px;background:linear-gradient(135deg,#555,#333);color:#ff9d9d;border:1px solid rgba(255,100,100,0.3);">💥 爆発履歴を全削除</button>
+<button class="reset-btn all" id="resetAllBtn">🗑️ 短冊・星・爆発履歴を全部リセット</button>
 
 <div class="section-title">
   🎋 短冊一覧
@@ -144,13 +145,13 @@
 
 <div class="section-title">
   ⭐ 星になった願い事
-  <span class="count-badge" id="starsCount">2個</span>
+  <span class="count-badge" id="starsCount">35個</span>
 </div>
 <div class="list" id="starsList"><div class="item">
       <div class="star-icon">⭐</div>
       <div class="info">
-        <div class="wish">テストｵﾜﾀ＼(^o^)／</div>
-        <div class="name">テスト</div>
+        <div class="wish">美味しいりんごが作れますように</div>
+        <div class="name">ABO</div>
       </div>
       <div class="btn-group">
         <button class="back-btn">短冊に戻す</button>
@@ -159,14 +160,350 @@
     </div><div class="item">
       <div class="star-icon">⭐</div>
       <div class="info">
-        <div class="wish">りんご</div>
-        <div class="name">テスト</div>
+        <div class="wish">嫁がシュークリーム買ってきてくれますように</div>
+        <div class="name">ABO</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">ぶあついローストビーフがたべられますように</div>
+        <div class="name">うた</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">ABO様の歌推しとれますように🍎</div>
+        <div class="name">しるこ</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">シャインマスカットの雨が振りますように！！</div>
+        <div class="name">あまね</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">素敵な彦星様に出会えますようにっ🙏💫✨</div>
+        <div class="name">うるふ♅</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">おうたがもっともっとうまくなりますように</div>
+        <div class="name">うた</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">全世界の社畜が評価されますように（休みくれ）</div>
+        <div class="name">神</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">あぼしゃんとマブになれると信じてるよ！</div>
+        <div class="name">くらんべり</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">仕事が辞めれますように</div>
+        <div class="name">まひろ</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">Switch買ってもらえますように</div>
+        <div class="name">しを</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">金がなくなりませんように。つかいすぎこわい。</div>
+        <div class="name">りの</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">りんごジュースください</div>
+        <div class="name">しを</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">仕事はよ落ち着きますように。美味しいもの食べられますように。猫がやせますように。</div>
+        <div class="name">りの</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">おにぎりーぐ🍙</div>
+        <div class="name">ナオミ小町</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">シュークリームが爆発しませんように</div>
+        <div class="name">はぴたま</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">美味しい焼肉が食べたいです</div>
+        <div class="name">ひょう</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">Switchほしい</div>
+        <div class="name">しを🌿‬🐾</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">宇宙の塵になりたい</div>
+        <div class="name">名無し</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">甘くて美味しいものが食べられますよーにっ</div>
+        <div class="name">恋衣みつき🌙‎🤍</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">喉、治ってにゃあฅ(˙꒳˙ฅ)</div>
+        <div class="name">みずにゃん</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">星になれますように</div>
+        <div class="name">KOMMY</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">「ギャーギャーギャーギャー やかましいんだよ 発情期ですかコノヤロー」</div>
+        <div class="name">坂田銀時</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">爆散しますように</div>
+        <div class="name">るなりあ🌙.*</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">二郎系ラーメン食べたい</div>
+        <div class="name">しを🌿‬🐾</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">「美しく最後を飾りつける暇があるなら 最後まで美しく生きようじゃねーか」</div>
+        <div class="name">坂田銀時</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">海賊王に俺はなる！</div>
+        <div class="name">モンキー・D・ルフィ</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">土曜日のAdoちゃんLIVE晴れますように</div>
+        <div class="name">Sakura</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">全人類息絶えろ！！！！！</div>
+        <div class="name">しを🌿‬🐾</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">楽しく配信を続けられますように✯</div>
+        <div class="name">ひょう</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">全動物たちが幸せに暮らせますように</div>
+        <div class="name">しを🌿‬🐾</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">美味しいりんごが食べたい！</div>
+        <div class="name">KaoRi</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">心穏やかにみんなが過ごせますように。</div>
+        <div class="name">しを🌿‬🐾</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">おおきいシュークリームを買ってきてくれますように</div>
+        <div class="name">ABO</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">プリン勝手に食べたのバレませんように</div>
+        <div class="name">ABO</div>
       </div>
       <div class="btn-group">
         <button class="back-btn">短冊に戻す</button>
         <button class="del-btn">削除</button>
       </div>
     </div></div>
+
+<div class="section-title">
+  💥 撃ち落とされた願い事
+  <span class="count-badge" id="failedCount">0件</span>
+</div>
+<div class="list" id="failedList"><div class="empty">爆発した願い事はありません</div></div>
 
 <!-- ポップアップ -->
 <div id="popup">
@@ -314,7 +651,14 @@ document.getElementById("popupLaunchBtn").addEventListener("click", async () => 
     resultMsg.className = "result-msg fail";
     launchBtn.textContent = "💥 失敗…";
 
-    // 失敗時も短冊を削除
+    // 爆発履歴に保存→短冊削除
+    await push(ref(db, "tanabata/failed"), {
+      name: currentItem.name,
+      wish: currentItem.wish,
+      color: currentItem.color || "#e8534f",
+      textColor: currentItem.textColor || "#fff",
+      createdAt: serverTimestamp()
+    });
     await remove(ref(db, "tanabata/tanzaku/" + currentItem.id));
 
     setTimeout(() => document.getElementById("popup").classList.remove("show"), 2500);
@@ -409,6 +753,57 @@ onValue(ref(db, "tanabata/stars"), (snapshot) => {
   });
 });
 
+// ===== 爆発リスト =====
+onValue(ref(db, "tanabata/failed"), (snapshot) => {
+  const data = snapshot.val() || {};
+  const items = Object.entries(data)
+    .map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  document.getElementById("failedCount").textContent = items.length + "件";
+  const list = document.getElementById("failedList");
+
+  if (items.length === 0) {
+    list.innerHTML = '<div class="empty">爆発した願い事はありません</div>';
+    return;
+  }
+  list.innerHTML = "";
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div class="star-icon">💥</div>
+      <div class="info">
+        <div class="wish">${escapeHtml(item.wish||"")}</div>
+        <div class="name">${escapeHtml(item.name||"")}</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    `;
+    div.querySelector(".back-btn").addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (confirm(`「${item.wish}」を短冊に戻しますか？`)) {
+        await push(ref(db, "tanabata/tanzaku"), {
+          name: item.name, wish: item.wish,
+          color: item.color || "#e8534f",
+          textColor: item.textColor || "#fff",
+          createdAt: serverTimestamp()
+        });
+        await remove(ref(db, "tanabata/failed/" + item.id));
+      }
+    });
+    div.querySelector(".del-btn").addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (confirm(`「${item.wish}」の爆発履歴を削除しますか？`)) {
+        await remove(ref(db, "tanabata/failed/" + item.id));
+      }
+    });
+    list.appendChild(div);
+  });
+});
+
 // ===== リセット =====
 document.getElementById("resetTanzakuBtn").addEventListener("click", async () => {
   if (confirm("全ての短冊を削除しますか？") && confirm("最終確認：本当に全削除しますか？")) {
@@ -420,8 +815,13 @@ document.getElementById("resetStarsBtn").addEventListener("click", async () => {
     await remove(ref(db, "tanabata/stars"));
   }
 });
+document.getElementById("resetFailedBtn").addEventListener("click", async () => {
+  if (confirm("爆発履歴を全削除しますか？") && confirm("最終確認：本当に全削除しますか？")) {
+    await remove(ref(db, "tanabata/failed"));
+  }
+});
 document.getElementById("resetAllBtn").addEventListener("click", async () => {
-  if (confirm("短冊・星を全部リセットしますか？") && confirm("最終確認：本当に全削除しますか？")) {
+  if (confirm("短冊・星・爆発履歴を全部リセットしますか？") && confirm("最終確認：本当に全削除しますか？")) {
     await remove(ref(db, "tanabata"));
   }
 });
