@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///C:/Users/abobo/Downloads/tanabata-admin_7.html -->
+<!-- saved from url=(0054)file:///C:/Users/abobo/Downloads/tanabata-admin_8.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -139,29 +139,19 @@
 
 <div class="section-title">
   🎋 短冊一覧
-  <span class="count-badge" id="tanzakuCount">1件</span>
+  <span class="count-badge" id="tanzakuCount">0件</span>
 </div>
-<div class="list" id="tanzakuList"><div class="item">
-      <div class="swatch" style="background:#e8534f"></div>
-      <div class="info">
-        <div class="wish">海賊王に俺はなる！</div>
-        <div class="name">モンキー・D・ルフィ</div>
-      </div>
-      <div class="btn-group">
-        <button class="launch-btn">🚀 打ち上げ</button>
-        <button class="del-btn">削除</button>
-      </div>
-    </div></div>
+<div class="list" id="tanzakuList"><div class="empty">短冊がありません</div></div>
 
 <div class="section-title">
   ⭐ 星になった願い事
-  <span class="count-badge" id="starsCount">32個</span>
+  <span class="count-badge" id="starsCount">34個</span>
 </div>
 <div class="list" id="starsList"><div class="item">
       <div class="star-icon">⭐</div>
       <div class="info">
-        <div class="wish">美味しいりんごが食べたい！</div>
-        <div class="name">KaoRi</div>
+        <div class="wish">プリン勝手に食べたのバレませんように</div>
+        <div class="name">ABO</div>
       </div>
       <div class="btn-group">
         <button class="back-btn">短冊に戻す</button>
@@ -172,6 +162,26 @@
       <div class="info">
         <div class="wish">プリン勝手に食べたのバレませんように</div>
         <div class="name">ABO</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">プリン勝手に食べたのバレませんように</div>
+        <div class="name">ABO</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
+      <div class="star-icon">⭐</div>
+      <div class="info">
+        <div class="wish">美味しいりんごが食べたい！</div>
+        <div class="name">KaoRi</div>
       </div>
       <div class="btn-group">
         <button class="back-btn">短冊に戻す</button>
@@ -481,9 +491,19 @@
 
 <div class="section-title">
   💥 撃ち落とされた願い事
-  <span class="count-badge" id="failedCount">1件</span>
+  <span class="count-badge" id="failedCount">2件</span>
 </div>
 <div class="list" id="failedList"><div class="item">
+      <div class="star-icon">💥</div>
+      <div class="info">
+        <div class="wish">海賊王に俺はなる！</div>
+        <div class="name">モンキー・D・ルフィ</div>
+      </div>
+      <div class="btn-group">
+        <button class="back-btn">短冊に戻す</button>
+        <button class="del-btn">削除</button>
+      </div>
+    </div><div class="item">
       <div class="star-icon">💥</div>
       <div class="info">
         <div class="wish">楽しく配信を続けられますように✯</div>
@@ -511,7 +531,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue, remove, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, onValue, remove, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKwFPNTgPJawD47WxuDsJH2-V1E3zWqoU",
@@ -575,17 +595,6 @@ function showPopup(item) {
   currentItem = item;
   launchLocked = false;
 
-  // OBS側にポップアップ表示を通知
-  set(ref(db, "tanabata/activePopup"), {
-    id: Date.now().toString(),
-    action: "show",
-    tanzakuId: item.id,
-    name: item.name,
-    wish: item.wish,
-    color: item.color || "#e8534f",
-    textColor: item.textColor || "#fff"
-  });
-
   document.getElementById("popupWish").textContent = item.wish;
   document.getElementById("popupName").textContent = "ー " + item.name;
   document.getElementById("popupName").classList.remove("revealed");
@@ -635,17 +644,6 @@ document.getElementById("popupLaunchBtn").addEventListener("click", async () => 
     resultMsg.className = "result-msg success";
     launchBtn.textContent = "⭐ 星になりました";
 
-    // OBS側に成功演出を通知
-    await set(ref(db, "tanabata/activePopup"), {
-      id: Date.now().toString(),
-      action: "launch_success",
-      tanzakuId: currentItem.id,
-      name: currentItem.name,
-      wish: currentItem.wish,
-      color: currentItem.color || "#e8534f",
-      textColor: currentItem.textColor || "#fff"
-    });
-
     // 星に保存→短冊削除
     await push(ref(db, "tanabata/stars"), {
       name: currentItem.name,
@@ -662,17 +660,6 @@ document.getElementById("popupLaunchBtn").addEventListener("click", async () => 
     resultMsg.textContent = "💥 撃ち落とされた…";
     resultMsg.className = "result-msg fail";
     launchBtn.textContent = "💥 失敗…";
-
-    // OBS側に失敗演出を通知
-    await set(ref(db, "tanabata/activePopup"), {
-      id: Date.now().toString(),
-      action: "launch_fail",
-      tanzakuId: currentItem.id,
-      name: currentItem.name,
-      wish: currentItem.wish,
-      color: currentItem.color || "#e8534f",
-      textColor: currentItem.textColor || "#fff"
-    });
 
     // 爆発履歴に保存→短冊削除
     await push(ref(db, "tanabata/failed"), {
